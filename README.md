@@ -66,7 +66,7 @@ This Spring Boot backend application supports basic operations for users and pro
 
 ### 1. Clone the Repository
 ```bash
-git clone <your-repo-url>
+git clone <https://github.com/shamanthkumar2003/BuilderPortfolio.git>
 cd portfolio
 ```
 
