@@ -59,8 +59,7 @@ This Spring Boot backend application supports basic operations for users and pro
 - **Java**: 17+
 - **Maven**: 3.6+
 - **MySQL Server**: Installed and running
-- **IDE**: IntelliJ IDEA, Eclipse, or VSCode (optional)
-
+- **IDE**: IntelliJ IDEA, Postman for testing
 ---
 
 ## Setup Instructions
