@@ -14,18 +14,18 @@ public class ProjectDTO {
 
     private Long id;
 
-    @NotBlank(message = "Title is required")
+    @NotBlank(message = "Project title is required.")
     private String title;
 
-    @NotBlank(message = "Description is required")
+    @NotBlank(message = "Project description is required.")
     private String description;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "Project status is required.")
     private Project.Status status;
 
-    @NotNull(message = "Client ID is required")
+    @NotNull(message = "Client ID must not be null.")
     private Long clientId;
 
-    @NotNull(message = "Builder ID is required")
+    @NotNull(message = "Builder ID must not be null.")
     private Long builderId;
 }

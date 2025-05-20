@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -34,4 +36,10 @@ public class User {
     public enum Role {
         ADMIN, BUILDER, CLIENT
     }
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Project> clientProjects;
+
+    @OneToMany(mappedBy = "builder", cascade = CascadeType.ALL)
+    private List<Project> builderProjects;
 }

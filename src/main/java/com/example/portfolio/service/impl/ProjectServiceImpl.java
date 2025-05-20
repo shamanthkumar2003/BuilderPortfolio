@@ -3,7 +3,9 @@ package com.example.portfolio.service.impl;
 import com.example.portfolio.dto.ProjectDTO;
 import com.example.portfolio.exception.ResourceNotFoundException;
 import com.example.portfolio.model.Project;
+import com.example.portfolio.model.User;
 import com.example.portfolio.repository.ProjectRepository;
+import com.example.portfolio.repository.UserRepository;
 import com.example.portfolio.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,10 @@ import java.util.stream.Collectors;
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Autowired
     public ProjectServiceImpl(ProjectRepository projectRepository) {
@@ -51,8 +57,15 @@ public class ProjectServiceImpl implements ProjectService {
         existingProject.setTitle(projectDTO.getTitle());
         existingProject.setDescription(projectDTO.getDescription());
         existingProject.setStatus(projectDTO.getStatus());
-        existingProject.setClientId(projectDTO.getClientId());
-        existingProject.setBuilderId(projectDTO.getBuilderId());
+        User client = userRepository.findById(projectDTO.getClientId())
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with ID: " + projectDTO.getClientId()));
+
+        User builder = userRepository.findById(projectDTO.getBuilderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Builder not found with ID: " + projectDTO.getBuilderId()));
+
+        existingProject.setClient(client);
+        existingProject.setBuilder(builder);
+
 
         Project updatedProject = projectRepository.save(existingProject);
         return convertToDTO(updatedProject);
@@ -71,8 +84,15 @@ public class ProjectServiceImpl implements ProjectService {
         project.setTitle(projectDTO.getTitle());
         project.setDescription(projectDTO.getDescription());
         project.setStatus(projectDTO.getStatus());
-        project.setClientId(projectDTO.getClientId());
-        project.setBuilderId(projectDTO.getBuilderId());
+
+        User client = userRepository.findById(projectDTO.getClientId())
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with ID: " + projectDTO.getClientId()));
+        project.setClient(client);
+
+        User builder = userRepository.findById(projectDTO.getBuilderId())
+                .orElseThrow(() -> new ResourceNotFoundException("Builder not found with ID: " + projectDTO.getBuilderId()));
+        project.setBuilder(builder);
+
         return project;
     }
 
@@ -82,8 +102,15 @@ public class ProjectServiceImpl implements ProjectService {
         projectDTO.setTitle(project.getTitle());
         projectDTO.setDescription(project.getDescription());
         projectDTO.setStatus(project.getStatus());
-        projectDTO.setClientId(project.getClientId());
-        projectDTO.setBuilderId(project.getBuilderId());
+
+        if (project.getClient() != null) {
+            projectDTO.setClientId(project.getClient().getId());
+        }
+
+        if (project.getBuilder() != null) {
+            projectDTO.setBuilderId(project.getBuilder().getId());
+        }
+
         return projectDTO;
     }
 }

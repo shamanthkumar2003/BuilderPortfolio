@@ -3,7 +3,9 @@ package com.example.portfolio;
 import com.example.portfolio.dto.ProjectDTO;
 import com.example.portfolio.exception.ResourceNotFoundException;
 import com.example.portfolio.model.Project;
+import com.example.portfolio.model.User;
 import com.example.portfolio.repository.ProjectRepository;
+import com.example.portfolio.repository.UserRepository;
 import com.example.portfolio.service.impl.ProjectServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,22 +28,35 @@ public class ProjectServiceTest {
     @Mock
     private ProjectRepository projectRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private ProjectServiceImpl projectService;
 
+    private User client;
+    private User builder;
     private Project project1;
     private Project project2;
     private ProjectDTO projectDTO;
 
     @BeforeEach
     public void setup() {
+        client = new User();
+        client.setId(1L);
+        client.setName("Client A");
+
+        builder = new User();
+        builder.setId(2L);
+        builder.setName("Builder B");
+
         project1 = new Project(
                 1L,
                 "Modern House",
                 "A modern house with 3 bedrooms",
                 Project.Status.UPCOMING,
-                1L,
-                2L
+                client,
+                builder
         );
 
         project2 = new Project(
@@ -49,8 +64,8 @@ public class ProjectServiceTest {
                 "Office Building",
                 "A 5-story office building in downtown",
                 Project.Status.IN_PROGRESS,
-                3L,
-                2L
+                client,
+                builder
         );
 
         projectDTO = new ProjectDTO();
@@ -63,6 +78,8 @@ public class ProjectServiceTest {
 
     @Test
     public void createProject_ShouldReturnProjectDTO() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(client));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(builder));
         when(projectRepository.save(any(Project.class))).thenReturn(project1);
 
         ProjectDTO result = projectService.createProject(projectDTO);
@@ -121,11 +138,13 @@ public class ProjectServiceTest {
                 "Modern House Updated",
                 "An updated modern house with 4 bedrooms",
                 Project.Status.IN_PROGRESS,
-                1L,
-                2L
+                client,
+                builder
         );
 
         when(projectRepository.findById(1L)).thenReturn(Optional.of(project1));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(client));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(builder));
         when(projectRepository.save(any(Project.class))).thenReturn(updatedProject);
 
         ProjectDTO result = projectService.updateProject(1L, updateDTO);

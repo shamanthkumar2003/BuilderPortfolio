@@ -29,13 +29,15 @@ public class Project {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @NotNull(message = "Client ID is required")
-    private Long clientId;
-
-    @NotNull(message = "Builder ID is required")
-    private Long builderId;
-
     public enum Status {
         UPCOMING, IN_PROGRESS, COMPLETED
     }
+
+    @ManyToOne
+    @JoinColumn(name = "client_id", nullable = false)
+    private User client;
+
+    @ManyToOne
+    @JoinColumn(name = "builder_id", nullable = false)
+    private User builder;
 }
